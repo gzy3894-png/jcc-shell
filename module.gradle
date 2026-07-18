@@ -1,0 +1,9 @@
+ext {
+    moduleLibraryName = "jccshell"
+    magiskModuleId = "zygisk_jcc_shell"
+    moduleName = "JCC Shell"
+    moduleAuthor = "jcc-shell"
+    moduleDescription = "(com.tencent.jkchess) 牌库读取壳：31338 + jcc_cardpool.txt"
+    moduleVersion = "v1.0.0"
+    moduleVersionCode = 1
+}
