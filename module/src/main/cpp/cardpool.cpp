@@ -15,7 +15,8 @@
 #include <string>
 #include <vector>
 
-#define DO_API(r, n, p) r (*n) p
+// 函数指针在 il2cpp_dump.cpp 里定义，这里只引用
+#define DO_API(r, n, p) extern r (*n) p
 #include "il2cpp-api-functions.h"
 #undef DO_API
 
