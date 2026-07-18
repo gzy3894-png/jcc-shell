@@ -20,7 +20,31 @@ jobs:
           grep -n GamePackageName module/src/main/cpp/game.h
           cat module.gradle
           ./gradlew :module:assembleRelease
+      - name: Pack zip
+        run: |
+          set -e
+          mkdir -p dist
+          if [ -d out/magisk_module_release ]; then
+            (cd out/magisk_module_release && zip -r ../../dist/jcc-shell-zygisk-v2.5.1.zip .)
+          fi
+          ls -la dist/ out/magisk_module_release/ 2>/dev/null || true
+          find out -type f | head -40
       - uses: actions/upload-artifact@v4
         with:
-          name: jcc-shell-zygisk
-          path: out/magisk_module_release/
+          name: jcc-shell-zygisk-2.5.1
+          path: |
+            dist/*.zip
+            out/magisk_module_release/**
+      - name: Release 2.5.1
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v2.5.1
+          name: JCC Shell Zygisk 2.5.1
+          body: |
+            当前赛季数据（真机扫描 2026-07-18）。
+            Magisk/Zygisk 安装后开金铲铲进大厅，读 jcc_cardpool.txt 或 31338 GET:牌库。
+          files: dist/jcc-shell-zygisk-v2.5.1.zip
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: true

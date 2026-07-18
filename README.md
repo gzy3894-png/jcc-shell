@@ -1,51 +1,47 @@
-# JCC Shell
+# JCC Shell 2.5.1
 
-金铲铲 `com.tencent.jkchess` 自用壳（**不依赖原 JCC Controller 的 SO**）。
+金铲铲（`com.tencent.jkchess`）**当前赛季数据版**。
 
-## 做什么
+## 一句话
 
-Zygisk 注入游戏进程后：
+2.5.0 不能用，多半是**游戏数据旧了**。  
+2.5.1 = **同一套用法 + 真机扫出来的新字段**，先恢复**牌库表可读**。
 
-1. 解析 IL2CPP，调用 `DataBaseManager.SearchACGHero(2)` 扫棋子表  
-2. 按当前赛季 `TACG_Hero_Client` 字段读 **id / 名 / 费用 / 头像 key**  
-3. 监听 `127.0.0.1:31338`（兼容 `GET:牌库`）  
-4. 落盘：
-   - `/data/data/com.tencent.jkchess/files/jcc_cardpool.txt`
-   - `/data/data/com.tencent.jkchess/files/jcc_shell_status.txt`
+## 数据从哪来
 
-## 安装
+- 真机 `jcc-scan` 扫描成功（2026-07-18）
+- 关键偏移写在 `module/src/main/cpp/season_offsets.h`
 
-1. Magisk 安装本模块 zip → 重启  
-2. **卸掉** 旧的 Il2CppDumper 模块（避免抢同一进程）  
-3. 打开金铲铲 → 进大厅 → 等 1～3 分钟（首次扫表）  
-4. 用 MT 看 `jcc_cardpool.txt`，或：
+| 字段 | 偏移 |
+|------|------|
+| 英雄 id | 0x10 |
+| 名字 | 0x18 |
+| 费用 | 0x60 |
+| 小图标 | 0xf8 |
+| 套数 | 0x114 |
 
-```text
-adb shell su -c "cat /data/data/com.tencent.jkchess/files/jcc_shell_status.txt"
-adb shell su -c "head -c 500 /data/data/com.tencent.jkchess/files/jcc_cardpool.txt"
-```
+## 两种用法
 
-## 协议（给悬浮窗 / 自己写的 UI）
+### A. Zygisk 模块（本仓库）
 
-```text
-→ GET:牌库\n
-← RSP:id:name:cost:remaining:total[:icon],...\n
+Magisk 安装 Actions 产物 zip，重启，打开金铲铲进大厅。  
+看：`/data/user/0/com.tencent.jkchess/files/jcc_cardpool.txt`  
+或本机 `127.0.0.1:31338` → `GET:牌库`
 
-→ GET:日志\n  或  GET:STATUS\n
-← RSP:<status text>\n
+### B. 普通 APK 注入
 
-→ DO:RESCAN\n
-← RSP:OK ...\n
-```
+见姊妹仓：**[jcc-shell-apk](https://github.com/gzy3894-png/jcc-shell-apk)** 的 **v2.5.1**  
+Root 点启动即可（不必装 Zygisk 模块）。
 
-`remaining/total` 第一版静态表为 `0:0`（对局实时库存需后续 hook 商店刷新；名字/费用/ID 先打通）。
+## 版本说明
 
-## logcat
+| 版本 | 含义 |
+|------|------|
+| 2.5.0 | 旧数据（会失效） |
+| **2.5.1** | **当前赛季数据（本版）** |
 
-```text
-adb logcat -s JccShell:V
-```
+尚未完整复刻 2.5.0 全部开关（剩余量/对局叠层等），牌库静态表已按新数据接好。
 
 ## 构建
 
-GitHub Actions → Build → 产物 `jcc-shell-zygisk` artifact（Magisk 模块目录，打 zip 安装）。
+Push `master` → GitHub Actions → Artifact `jcc-shell-zygisk`

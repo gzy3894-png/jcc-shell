@@ -1,0 +1,6 @@
+id=zygisk_jcc_shell
+name=JCC Shell
+version=v1.0.0
+versionCode=1
+author=jcc-shell
+description=(com.tencent.jkchess) 牌库读取壳：31338 + jcc_cardpool.txt
