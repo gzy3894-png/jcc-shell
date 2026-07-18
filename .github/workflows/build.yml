@@ -4,6 +4,9 @@ on:
   push:
     branches: [ master, main ]
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -44,7 +47,8 @@ jobs:
             当前赛季数据（真机扫描 2026-07-18）。
             Magisk/Zygisk 安装后开金铲铲进大厅，读 jcc_cardpool.txt 或 31338 GET:牌库。
           files: dist/jcc-shell-zygisk-v2.5.1.zip
-          generate_release_notes: true
+          generate_release_notes: false
+          fail_on_unmatched_files: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         continue-on-error: true
